@@ -86,7 +86,40 @@ export async function POST(req: NextRequest) {
       console.log('Contact message saved to database successfully')
     } catch (dbError) {
       console.error('Failed to save contact message to database:', dbError)
-      // Continue anyway - don't fail the whole request
+
+      // Try to create the table if it doesn't exist
+      try {
+        console.log('Attempting to create ContactMessage table...')
+        await prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS "ContactMessage" (
+            "id" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "email" TEXT NOT NULL,
+            "subject" TEXT,
+            "message" TEXT NOT NULL,
+            "type" TEXT NOT NULL DEFAULT 'general',
+            "processed" BOOLEAN NOT NULL DEFAULT false,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "ContactMessage_pkey" PRIMARY KEY ("id")
+          );
+        `
+
+        // Try to save again after creating table
+        await prisma.contactMessage.create({
+          data: {
+            name,
+            email,
+            subject: subject || '',
+            message,
+            type,
+          }
+        })
+        console.log('Contact message saved after creating table')
+      } catch (createError) {
+        console.error('Failed to create table or save message:', createError)
+        // Continue anyway - don't fail the whole request
+      }
     }
 
     // Check if SMTP is configured
