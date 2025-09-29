@@ -44,17 +44,24 @@ const createTransporter = () => {
   }
 
   // GoDaddy/Custom domain configuration (most likely your case)
+  // Try different ports and settings based on environment variables
+  const port = parseInt(process.env.SMTP_PORT || '587')
+  const isSecure = port === 465
+
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtpout.secureserver.net', // GoDaddy SMTP
-    port: parseInt(process.env.SMTP_PORT || '465'),
-    secure: true, // true for 465, false for other ports
+    port: port,
+    secure: isSecure, // true for 465, false for 587
     auth: {
       user: process.env.SMTP_EMAIL,
       pass: process.env.SMTP_PASSWORD
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
+    },
+    debug: true, // Enable debug output
+    logger: true // Log to console
   })
 }
 
