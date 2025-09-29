@@ -7,26 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  password    String
-  name        String
-  role        String   @default("athlete")
-  sport       String?
-  bio         String?  @db.Text
-  avatarUrl   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  journalEntries    JournalEntry[]
-  bookingsAsAthlete Booking[]         @relation("AthleteBookings")
-  bookingsAsCoach   Booking[]         @relation("CoachBookings")
-  registrations     Registration[]
+  id                String         @id @default(cuid())
+  email             String         @unique
+  password          String
+  name              String
+  role              String         @default("athlete")
+  sport             String?
+  bio               String?
+  avatarUrl         String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  articles          Article[]
+  bookingsAsCoach   Booking[]      @relation("CoachBookings")
+  bookingsAsAthlete Booking[]      @relation("AthleteBookings")
   formAnalyses      FormAnalysis[]
   formComments      FormComment[]
-  articles          Article[]
+  journalEntries    JournalEntry[]
+  registrations     Registration[]
 }
 
 model JournalEntry {
@@ -37,48 +35,45 @@ model JournalEntry {
   sleepHours Float?
   rpe        Int?
   tags       String[] @default([])
-  notes      String?  @db.Text
+  notes      String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Booking {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   userId       String
   coachId      String
   type         String
-  status       String        @default("requested")
+  status       String    @default("requested")
   scheduledAt  DateTime?
-  message      String?       @db.Text
+  message      String?
   externalLink String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-
-  user  User @relation("AthleteBookings", fields: [userId], references: [id], onDelete: Cascade)
-  coach User @relation("CoachBookings", fields: [coachId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  coach        User      @relation("CoachBookings", fields: [coachId], references: [id])
+  user         User      @relation("AthleteBookings", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([coachId])
 }
 
 model Workshop {
-  id           String   @id @default(cuid())
-  title        String
-  slug         String   @unique
-  summary      String   @db.Text
-  content      String   @db.Text
-  startsAt     DateTime
-  durationMin  Int
-  capacity     Int
-  location     String
-  priceCents   Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
+  id            String         @id @default(cuid())
+  title         String
+  slug          String         @unique
+  summary       String
+  content       String
+  startsAt      DateTime
+  durationMin   Int
+  capacity      Int
+  location      String
+  priceCents    Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   registrations Registration[]
 
   @@index([slug])
@@ -89,9 +84,8 @@ model Registration {
   userId     String
   workshopId String
   createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workshop   Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
 
   @@unique([userId, workshopId])
   @@index([userId])
@@ -99,48 +93,45 @@ model Registration {
 }
 
 model FormAnalysis {
-  id        String     @id @default(cuid())
+  id        String        @id @default(cuid())
   athleteId String
   event     String
   videoUrl  String
-  notes     String?    @db.Text
-  status    String     @default("submitted")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  athlete  User          @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  comments FormComment[]
+  notes     String?
+  status    String        @default("submitted")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  athlete   User          @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  comments  FormComment[]
 
   @@index([athleteId])
 }
 
 model FormComment {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   analysisId String
   authorId   String
   atSecond   Float?
-  comment    String   @db.Text
-  createdAt  DateTime @default(now())
-
-  analysis FormAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
-  author   User         @relation(fields: [authorId], references: [id])
+  comment    String
+  createdAt  DateTime     @default(now())
+  analysis   FormAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  author     User         @relation(fields: [authorId], references: [id])
 
   @@index([analysisId])
 }
 
 model Article {
-  id          String          @id @default(cuid())
+  id          String    @id @default(cuid())
   section     String
   title       String
-  slug        String          @unique
-  excerpt     String          @db.Text
-  content     String          @db.Text
+  slug        String    @unique
+  excerpt     String
+  content     String
   authorId    String
   publishedAt DateTime?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-
-  author User @relation(fields: [authorId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  author      User      @relation(fields: [authorId], references: [id])
 
   @@index([slug])
   @@index([section])

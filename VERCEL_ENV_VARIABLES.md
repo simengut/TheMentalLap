@@ -6,7 +6,7 @@ Settings → Environment Variables
 ## Required Variables:
 
 ```
-DATABASE_URL=postgresql://postgres:BirgenElise13.15@db.tuhkxhilertuegrjyiuc.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres:BirgenElise13.15@aws-0-us-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
 NEXTAUTH_SECRET=your-secret-key-here-change-in-production
 NEXTAUTH_URL=https://thementallap.com
 NEXT_PUBLIC_SUPABASE_URL=https://tuhkxhilertuegrjyiuc.supabase.co
