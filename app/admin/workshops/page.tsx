@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, MapPin, Users, DollarSign, Edit, Copy } from 'lucide-react'
+import Link from 'next/link'
 
 interface Workshop {
   id: string
@@ -92,10 +93,12 @@ export default function WorkshopManagementPage() {
             <h1 className="text-3xl font-bold">Workshop Management</h1>
             <p className="text-slate-600 mt-2">Create and manage workshops</p>
           </div>
-          <Button>
-            <Calendar className="h-4 w-4 mr-2" />
-            Create Workshop
-          </Button>
+          <Link href="/admin/workshops/create">
+            <Button>
+              <Calendar className="h-4 w-4 mr-2" />
+              Create Workshop
+            </Button>
+          </Link>
         </div>
       </div>
 
