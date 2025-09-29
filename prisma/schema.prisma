@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  role        String   @default("athlete")
+  sport       String?
+  bio         String?  @db.Text
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  journalEntries    JournalEntry[]
+  bookingsAsAthlete Booking[]         @relation("AthleteBookings")
+  bookingsAsCoach   Booking[]         @relation("CoachBookings")
+  registrations     Registration[]
+  formAnalyses      FormAnalysis[]
+  formComments      FormComment[]
+  articles          Article[]
+}
+
+model JournalEntry {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime @default(now())
+  mood       Int
+  sleepHours Float?
+  rpe        Int?
+  tags       String[] @default([])
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Booking {
+  id           String        @id @default(cuid())
+  userId       String
+  coachId      String
+  type         String
+  status       String        @default("requested")
+  scheduledAt  DateTime?
+  message      String?       @db.Text
+  externalLink String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user  User @relation("AthleteBookings", fields: [userId], references: [id], onDelete: Cascade)
+  coach User @relation("CoachBookings", fields: [coachId], references: [id])
+
+  @@index([userId])
+  @@index([coachId])
+}
+
+model Workshop {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  summary      String   @db.Text
+  content      String   @db.Text
+  startsAt     DateTime
+  durationMin  Int
+  capacity     Int
+  location     String
+  priceCents   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  registrations Registration[]
+
+  @@index([slug])
+}
+
+model Registration {
+  id         String   @id @default(cuid())
+  userId     String
+  workshopId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workshopId])
+  @@index([userId])
+  @@index([workshopId])
+}
+
+model FormAnalysis {
+  id        String     @id @default(cuid())
+  athleteId String
+  event     String
+  videoUrl  String
+  notes     String?    @db.Text
+  status    String     @default("submitted")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  athlete  User          @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  comments FormComment[]
+
+  @@index([athleteId])
+}
+
+model FormComment {
+  id         String   @id @default(cuid())
+  analysisId String
+  authorId   String
+  atSecond   Float?
+  comment    String   @db.Text
+  createdAt  DateTime @default(now())
+
+  analysis FormAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  author   User         @relation(fields: [authorId], references: [id])
+
+  @@index([analysisId])
+}
+
+model Article {
+  id          String          @id @default(cuid())
+  section     String
+  title       String
+  slug        String          @unique
+  excerpt     String          @db.Text
+  content     String          @db.Text
+  authorId    String
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([slug])
+  @@index([section])
+}

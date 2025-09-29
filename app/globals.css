@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-green-50/10 via-stone-50 to-emerald-50/10 min-h-screen;
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .bg-dots-pattern {
+    background-image: radial-gradient(circle, #5a726008 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, #5a726005 1px, transparent 1px),
+                      linear-gradient(to bottom, #5a726005 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
