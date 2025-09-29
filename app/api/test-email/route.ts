@@ -25,19 +25,20 @@ const createTransporter = () => {
     })
   }
 
-  // Outlook/Hotmail configuration
-  if (smtpEmail.includes('@outlook.com') || smtpEmail.includes('@hotmail.com') || smtpEmail.includes('@live.com')) {
+  // Outlook/Hotmail/Office365 configuration
+  if (smtpEmail.includes('@outlook.com') || smtpEmail.includes('@hotmail.com') || smtpEmail.includes('@live.com') || process.env.SMTP_HOST === 'smtp.office365.com') {
     return nodemailer.createTransport({
-      service: 'outlook',
-      host: 'smtp-mail.outlook.com',
+      host: process.env.SMTP_HOST || 'smtp.office365.com',
       port: 587,
       secure: false,
+      requireTLS: true,
       auth: {
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD
       },
       tls: {
-        ciphers: 'SSLv3'
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false
       }
     })
   }
