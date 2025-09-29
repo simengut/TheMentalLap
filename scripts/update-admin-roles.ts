@@ -8,21 +8,21 @@ async function updateAdminRoles() {
     where: { email: 'birgen@thementallap.com' },
     data: { role: 'admin' }
   })
-  console.log(`✅ Updated ${birgen.name} to admin role`)
+  console.log(`Updated ${birgen.name} to admin role`)
 
   // Update Skyla to admin
   const skyla = await prisma.user.update({
     where: { email: 'skyla@thementallap.com' },
     data: { role: 'admin' }
   })
-  console.log(`✅ Updated ${skyla.name} to admin role`)
+  console.log(`Updated ${skyla.name} to admin role`)
 
   // Keep the original admin as well
   const adminUser = await prisma.user.findUnique({
     where: { email: 'admin@thementallap.com' }
   })
   if (adminUser) {
-    console.log(`✅ admin@thementallap.com remains admin`)
+    console.log(`admin@thementallap.com remains admin`)
   }
 
   // List all admin users
@@ -31,14 +31,14 @@ async function updateAdminRoles() {
     select: { email: true, name: true }
   })
 
-  console.log('\n📊 All admin users:')
+  console.log('\nAll admin users:')
   admins.forEach(admin => {
     console.log(`   - ${admin.name} (${admin.email})`)
   })
 }
 
 updateAdminRoles()
-  .then(() => console.log('\n✅ Admin roles updated successfully!'))
+  .then(() => console.log('\nAdmin roles updated successfully!'))
   .catch((e) => {
     console.error('Error:', e)
     process.exit(1)

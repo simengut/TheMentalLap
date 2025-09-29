@@ -6,7 +6,6 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <section className="bg-gradient-track px-4 py-24 text-center text-white relative overflow-hidden">
-        <div className="absolute top-10 left-10 text-6xl opacity-10 rotate-12">🌱</div>
         <div className="mx-auto max-w-4xl relative z-10">
           <h1 className="mb-6 text-5xl font-bold tracking-tight text-white sm:text-6xl drop-shadow-lg">
             Train your mind. Grow your edge.

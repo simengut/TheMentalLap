@@ -21,7 +21,7 @@ async function resetPasswords() {
     })
   }
 
-  console.log('\n✅ All passwords have been reset to: password123')
+  console.log('\nAll passwords have been reset to: password123')
 
   // Verify the specific users we need
   const birgen = await prisma.user.findUnique({
@@ -29,7 +29,7 @@ async function resetPasswords() {
   })
 
   if (!birgen) {
-    console.log('\n⚠️  birgen@thementallap.com not found! Creating user...')
+    console.log('\nbirgen@thementallap.com not found! Creating user...')
     await prisma.user.create({
       data: {
         email: 'birgen@thementallap.com',
@@ -40,7 +40,7 @@ async function resetPasswords() {
         bio: 'Mental Performance Coach and former Student Senate Co-President at Gustavus.'
       }
     })
-    console.log('✅ Created birgen@thementallap.com')
+    console.log('Created birgen@thementallap.com')
   }
 
   const admin = await prisma.user.findUnique({
@@ -48,7 +48,7 @@ async function resetPasswords() {
   })
 
   if (!admin) {
-    console.log('\n⚠️  admin@thementallap.com not found! Creating user...')
+    console.log('\nadmin@thementallap.com not found! Creating user...')
     await prisma.user.create({
       data: {
         email: 'admin@thementallap.com',
@@ -57,12 +57,12 @@ async function resetPasswords() {
         role: 'admin'
       }
     })
-    console.log('✅ Created admin@thementallap.com')
+    console.log('Created admin@thementallap.com')
   }
 }
 
 resetPasswords()
-  .then(() => console.log('\n✅ Password reset complete!'))
+  .then(() => console.log('\nPassword reset complete!'))
   .catch((e) => {
     console.error('Error:', e)
     process.exit(1)

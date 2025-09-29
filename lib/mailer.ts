@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
 
 if (process.env.NODE_ENV === 'development') {
   (transporter.sendMail as any) = async (mailOptions: any) => {
-    console.log('📧 Email sent (dev mode):')
+    console.log('Email sent (dev mode):')
     console.log('To:', mailOptions.to)
     console.log('Subject:', mailOptions.subject)
     console.log('Text:', mailOptions.text)
