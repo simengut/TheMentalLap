@@ -79,7 +79,7 @@ async function main() {
           mood: Math.floor(Math.random() * 3) + 3,
           sleepHours: 7 + Math.random() * 2,
           rpe: Math.floor(Math.random() * 4) + 4,
-          tags: 'training, competition prep',
+          tags: ['training', 'competition prep'],
           notes: 'Felt good during practice. Working on maintaining form at higher speeds.',
         },
       })
