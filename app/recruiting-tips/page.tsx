@@ -29,19 +29,19 @@ export default async function RecruitingTipsPage() {
     {
       title: 'Getting Started',
       description: 'Foundation knowledge for the recruiting process',
-      icon: '🎯',
+      icon: '',
       articles: articles.slice(0, 2)
     },
     {
       title: 'Communication',
       description: 'How to effectively reach out to coaches',
-      icon: '💬',
+      icon: '',
       articles: articles.slice(2, 4)
     },
     {
       title: 'Campus Visits',
       description: 'Making the most of your college visits',
-      icon: '🏫',
+      icon: '',
       articles: articles.slice(4, 5)
     }
   ]
@@ -64,17 +64,14 @@ export default async function RecruitingTipsPage() {
             </p>
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-lg bg-gradient-to-br from-white/90 to-primary-50/70 p-4 shadow-md hover:shadow-lg transition-shadow">
-                <div className="mb-2 text-2xl">📚</div>
                 <h3 className="font-semibold">Research Phase</h3>
                 <p className="text-sm text-slate-600">Find the right academic and athletic fit</p>
               </div>
               <div className="rounded-lg bg-gradient-to-br from-white/90 to-primary-50/70 p-4 shadow-md hover:shadow-lg transition-shadow">
-                <div className="mb-2 text-2xl">📧</div>
                 <h3 className="font-semibold">Outreach Phase</h3>
                 <p className="text-sm text-slate-600">Connect with coaches effectively</p>
               </div>
               <div className="rounded-lg bg-gradient-to-br from-white/90 to-primary-50/70 p-4 shadow-md hover:shadow-lg transition-shadow">
-                <div className="mb-2 text-2xl">🤝</div>
                 <h3 className="font-semibold">Decision Phase</h3>
                 <p className="text-sm text-slate-600">Evaluate offers and make your choice</p>
               </div>
@@ -88,7 +85,6 @@ export default async function RecruitingTipsPage() {
             {categories.map((category) => (
               <div key={category.title}>
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="text-2xl">{category.icon}</span>
                   <div>
                     <h3 className="font-semibold">{category.title}</h3>
                     <p className="text-sm text-slate-600">{category.description}</p>
@@ -123,7 +119,6 @@ export default async function RecruitingTipsPage() {
           <div className="space-y-4">
             <Card>
               <CardContent className="flex gap-4 p-6">
-                <div className="flex-shrink-0 text-3xl">💡</div>
                 <div>
                   <p className="mb-2 font-semibold">Skyla's Tip: Start Early, Stay Organized</p>
                   <p className="text-sm text-slate-600">
@@ -136,7 +131,6 @@ export default async function RecruitingTipsPage() {
             </Card>
             <Card>
               <CardContent className="flex gap-4 p-6">
-                <div className="flex-shrink-0 text-3xl">💡</div>
                 <div>
                   <p className="mb-2 font-semibold">Birgen's Tip: Be Authentically You</p>
                   <p className="text-sm text-slate-600">

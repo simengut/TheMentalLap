@@ -29,7 +29,7 @@ export default async function LibraryPage() {
   const mentalSkills = [
     {
       category: 'Pre-Competition',
-      icon: '🎯',
+      icon: '',
       description: 'Preparation techniques for peak readiness',
       skills: [
         { title: 'Visualization', desc: 'Mental rehearsal for perfect execution' },
@@ -39,7 +39,7 @@ export default async function LibraryPage() {
     },
     {
       category: 'During Competition',
-      icon: '🔥',
+      icon: '',
       description: 'In-the-moment strategies for excellence',
       skills: [
         { title: 'Focus Cues', desc: 'Stay present and locked in' },
@@ -49,7 +49,7 @@ export default async function LibraryPage() {
     },
     {
       category: 'Growth Mindset',
-      icon: '🌱',
+      icon: '',
       description: 'Long-term mental development',
       skills: [
         { title: 'Goal Setting', desc: 'Create meaningful objectives' },
@@ -78,7 +78,6 @@ export default async function LibraryPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {mentalSkills.map((skill) => (
                 <div key={skill.category} className="rounded-lg bg-gradient-to-br from-white/90 to-accent-50/70 p-4 shadow-md hover:shadow-lg transition-shadow">
-                  <div className="mb-2 text-2xl">{skill.icon}</div>
                   <h3 className="font-semibold">{skill.category}</h3>
                   <p className="text-sm text-slate-600">{skill.description}</p>
                 </div>
@@ -119,7 +118,6 @@ export default async function LibraryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-primary-600">⏱</span>
                   60-Second Reset
                 </CardTitle>
               </CardHeader>
@@ -140,7 +138,6 @@ export default async function LibraryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-accent-500">🧘</span>
                   Box Breathing for Calm
                 </CardTitle>
               </CardHeader>

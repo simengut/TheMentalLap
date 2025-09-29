@@ -140,7 +140,7 @@ export default function JournalPage() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-brand-indigo">7 days</p>
-            <p className="text-sm text-slate-600">Keep it going! 🔥</p>
+            <p className="text-sm text-slate-600">Keep it going!</p>
           </CardContent>
         </Card>
 

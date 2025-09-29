@@ -1,25 +1,83 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { prisma } from '@/lib/prisma'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
-async function getWorkshops() {
-  try {
-    const workshops = await prisma.workshop.findMany({
-      orderBy: { startsAt: 'asc' },
-      include: {
-        _count: {
-          select: { registrations: true }
-        }
-      }
-    })
-    return workshops
-  } catch (error) {
-    return []
+interface Workshop {
+  id: string
+  title: string
+  summary: string
+  startsAt: string
+  durationMin: number
+  location: string
+  priceCents: number
+  capacity: number
+  _count: {
+    registrations: number
   }
 }
 
-export default async function WorkshopsPage() {
-  const workshops = await getWorkshops()
+export default function WorkshopsPage() {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const [workshops, setWorkshops] = useState<Workshop[]>([])
+  const [loading, setLoading] = useState(true)
+  const [registering, setRegistering] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchWorkshops()
+  }, [])
+
+  async function fetchWorkshops() {
+    try {
+      const response = await fetch('/api/workshops')
+      if (response.ok) {
+        const data = await response.json()
+        setWorkshops(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch workshops:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleRegister(workshopId: string) {
+    if (!session) {
+      router.push('/auth/signin')
+      return
+    }
+
+    setRegistering(workshopId)
+    try {
+      const response = await fetch(`/api/workshops/${workshopId}/register`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        alert('Successfully registered for workshop!')
+        fetchWorkshops() // Refresh to update counts
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Failed to register')
+      }
+    } catch (error) {
+      alert('Failed to register. Please try again.')
+    } finally {
+      setRegistering(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center">Loading workshops...</div>
+      </div>
+    )
+  }
 
   const upcomingWorkshops = workshops.filter(w => new Date(w.startsAt) > new Date())
   const pastWorkshops = workshops.filter(w => new Date(w.startsAt) <= new Date())
@@ -70,15 +128,21 @@ export default async function WorkshopsPage() {
                   <CardContent>
                     <p className="mb-4 text-slate-600">{workshop.summary}</p>
                     <div className="mb-4 flex items-center gap-4 text-sm text-neutral-500">
-                      <span>📍 {workshop.location}</span>
-                      <span>👥 {workshop._count.registrations}/{workshop.capacity} registered</span>
+                      <span>Location: {workshop.location}</span>
+                      <span>Registered: {workshop._count.registrations}/{workshop.capacity}</span>
                     </div>
                     <div className="flex gap-4">
                       <Button
                         variant="brand"
-                        disabled={workshop._count.registrations >= workshop.capacity}
+                        disabled={workshop._count.registrations >= workshop.capacity || registering === workshop.id}
+                        onClick={() => handleRegister(workshop.id)}
                       >
-                        {workshop._count.registrations >= workshop.capacity ? 'Full' : 'Register Now'}
+                        {registering === workshop.id
+                          ? 'Registering...'
+                          : workshop._count.registrations >= workshop.capacity
+                          ? 'Full'
+                          : 'Register Now'
+                        }
                       </Button>
                       <Button variant="outline">Learn More</Button>
                     </div>

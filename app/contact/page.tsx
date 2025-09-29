@@ -32,7 +32,7 @@ export default function ContactPage() {
           <CardContent>
             {submitted ? (
               <div className="py-8 text-center">
-                <div className="mb-4 text-4xl">✅</div>
+                <div className="mb-4 text-4xl font-bold text-green-600">Message Sent!</div>
                 <h3 className="mb-2 text-lg font-semibold">Message Sent!</h3>
                 <p className="text-slate-600">
                   Thanks for reaching out. We'll get back to you soon.

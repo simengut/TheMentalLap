@@ -1,42 +1,83 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+'use client'
+
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
-import { Calendar, Clock, MapPin, Users, DollarSign, Edit, Trash2 } from 'lucide-react'
+import { Calendar, Clock, MapPin, Users, DollarSign, Edit, Copy } from 'lucide-react'
 
-export default async function WorkshopManagementPage() {
-  const session = await getServerSession(authOptions)
+interface Workshop {
+  id: string
+  title: string
+  summary: string
+  startsAt: string
+  durationMin: number
+  location: string
+  priceCents: number
+  capacity: number
+  registrations: {
+    id: string
+    user: {
+      name: string
+      email: string
+    }
+  }[]
+}
 
-  if (!session || session.user.role !== 'admin') {
-    redirect('/dashboard')
+export default function WorkshopManagementPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [workshops, setWorkshops] = useState<Workshop[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (!session || (session.user as any)?.role !== 'admin') {
+      router.push('/dashboard')
+      return
+    }
+
+    fetchWorkshops()
+  }, [session, status, router])
+
+  async function fetchWorkshops() {
+    try {
+      const response = await fetch('/api/admin/workshops')
+      if (response.ok) {
+        const data = await response.json()
+        setWorkshops(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch workshops:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Fetch all workshops with registrations
-  const workshops = await prisma.workshop.findMany({
-    include: {
-      registrations: {
-        include: {
-          user: {
-            select: {
-              name: true,
-              email: true
-            }
-          }
-        }
-      }
-    },
-    orderBy: {
-      startsAt: 'desc'
-    }
-  })
+  function copyEmails(emails: string[]) {
+    const emailString = emails.join(', ')
+    navigator.clipboard.writeText(emailString)
+    alert('Email addresses copied to clipboard!')
+  }
+
+  if (status === 'loading' || loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!session || (session.user as any)?.role !== 'admin') {
+    return null
+  }
 
   const now = new Date()
-  const upcomingWorkshops = workshops.filter(w => w.startsAt >= now)
-  const pastWorkshops = workshops.filter(w => w.startsAt < now)
+  const upcomingWorkshops = workshops.filter(w => new Date(w.startsAt) >= now)
+  const pastWorkshops = workshops.filter(w => new Date(w.startsAt) < now)
 
   // Calculate revenue
   const totalRevenue = workshops.reduce((sum, workshop) => {
@@ -157,11 +198,21 @@ export default async function WorkshopManagementPage() {
 
                         {workshop.registrations.length > 0 && (
                           <div className="mt-3 p-2 bg-slate-50 rounded">
-                            <p className="text-sm font-medium mb-1">Registered Athletes:</p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-sm font-medium">Registered Athletes:</p>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => copyEmails(workshop.registrations.map(r => r.user.email))}
+                              >
+                                <Copy className="h-3 w-3 mr-1" />
+                                Copy Emails
+                              </Button>
+                            </div>
                             <div className="flex flex-wrap gap-2">
                               {workshop.registrations.slice(0, 5).map((reg) => (
                                 <span key={reg.id} className="text-xs bg-white px-2 py-1 rounded border">
-                                  {reg.user.name}
+                                  {reg.user.name} ({reg.user.email})
                                 </span>
                               ))}
                               {workshop.registrations.length > 5 && (
@@ -221,6 +272,18 @@ export default async function WorkshopManagementPage() {
                           ${(workshop.registrations.length * workshop.priceCents / 100).toFixed(2)} revenue
                         </span>
                       </div>
+                      {workshop.registrations.length > 0 && (
+                        <div className="mt-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copyEmails(workshop.registrations.map(r => r.user.email))}
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy {workshop.registrations.length} emails
+                          </Button>
+                        </div>
+                      )}
                     </div>
                     <Button size="sm" variant="ghost">
                       View Report

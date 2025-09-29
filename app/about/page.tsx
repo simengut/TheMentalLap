@@ -4,10 +4,8 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12 relative">
       <div className="absolute inset-0 bg-gradient-to-br from-green-50/25 via-emerald-50/15 to-stone-50 -z-10"></div>
-      <div className="absolute top-10 right-20 text-6xl opacity-10 rotate-12">🧠</div>
-      <div className="absolute bottom-20 left-20 text-5xl opacity-10 -rotate-12">🌱</div>
       <div className="mx-auto max-w-4xl relative z-10">
-        <h1 className="mb-8 text-4xl font-bold">About The Mental Lap 🧠🌱</h1>
+        <h1 className="mb-8 text-4xl font-bold">About The Mental Lap</h1>
 
         <div className="prose prose-lg max-w-none">
           <p className="text-xl text-slate-600">
@@ -15,14 +13,14 @@ export default function AboutPage() {
           </p>
 
           <section className="my-12">
-            <h2 className="mb-6 text-2xl font-bold">🎯 Our Mission</h2>
+            <h2 className="mb-6 text-2xl font-bold">Our Mission</h2>
             <p className="text-slate-600">
               We deliver athlete-to-athlete mental performance tools, track & field form analysis, recruiting guidance, and live workshops—built by and for competitors. Our platform bridges the gap between elite college experience and developing athletes at all levels.
             </p>
           </section>
 
           <section className="my-12">
-            <h2 className="mb-6 text-2xl font-bold">🧠 Meet Our Coaches</h2>
+            <h2 className="mb-6 text-2xl font-bold">Meet Our Coaches</h2>
 
             <Card className="mb-8">
               <CardHeader>
@@ -95,7 +93,7 @@ export default function AboutPage() {
           </section>
 
           <section className="my-12">
-            <h2 className="mb-6 text-2xl font-bold">🎯 Why Choose The Mental Lap?</h2>
+            <h2 className="mb-6 text-2xl font-bold">Why Choose The Mental Lap?</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <h3 className="mb-2 font-semibold">Athlete-Tested Methods</h3>
@@ -125,7 +123,7 @@ export default function AboutPage() {
           </section>
 
           <section className="my-12 rounded-lg bg-gradient-to-br from-green-50/30 via-emerald-50/20 to-stone-50 p-8 text-center shadow-xl border border-green-200/20">
-            <h2 className="mb-4 text-2xl font-bold">💪 Ready to elevate your mental performance? 🧠</h2>
+            <h2 className="mb-4 text-2xl font-bold">Ready to elevate your mental performance?</h2>
             <p className="mb-6 text-slate-600">
               Join The Mental Lap and learn from athletes who've achieved what you're working toward.
             </p>

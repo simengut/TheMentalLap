@@ -60,7 +60,7 @@ export default function FormAnalysisPage() {
         <div className="mx-auto max-w-2xl relative">
           <Card>
             <CardContent className="py-12 text-center">
-              <div className="mb-4 text-4xl">✅</div>
+              <div className="mb-4 text-4xl font-bold text-green-600">Success!</div>
               <h2 className="mb-2 text-2xl font-semibold">Video Submitted!</h2>
               <p className="mb-6 text-slate-600">
                 Your video has been submitted for analysis. Our coaches will review it within 48 hours.
@@ -165,27 +165,27 @@ export default function FormAnalysisPage() {
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Block/start mechanics and acceleration</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Body positioning and angles</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Hurdle clearance and rhythm (if applicable)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Arm swing and coordination</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Ground contact and stride patterns</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-accent-500">✓</span>
+                    <span className="text-accent-500 font-bold">•</span>
                     <span>Specific technical improvements</span>
                   </li>
                 </ul>
