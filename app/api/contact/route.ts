@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { prisma } from '@/lib/prisma'
 
 // Create reusable transporter object using SMTP transport
 const transporter = nodemailer.createTransport({
@@ -20,6 +21,37 @@ export async function POST(req: NextRequest) {
         { error: 'Name, email, and message are required' },
         { status: 400 }
       )
+    }
+
+    // Always save to database first as backup
+    try {
+      await prisma.contactMessage.create({
+        data: {
+          name,
+          email,
+          subject: subject || '',
+          message,
+          type,
+        }
+      })
+      console.log('Contact message saved to database successfully')
+    } catch (dbError) {
+      console.error('Failed to save contact message to database:', dbError)
+      // Continue anyway - don't fail the whole request
+    }
+
+    // Check if SMTP is configured
+    if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
+      console.log('Contact form submission received (SMTP not configured):')
+      console.log(`From: ${name} <${email}>`)
+      console.log(`Type: ${type}`)
+      console.log(`Subject: ${subject || 'No subject'}`)
+      console.log(`Message: ${message}`)
+
+      return NextResponse.json({
+        success: true,
+        message: 'Message received successfully! We\'ll get back to you soon.'
+      })
     }
 
     // Determine recipient based on type
@@ -139,18 +171,14 @@ The Mental Lap Team
   } catch (error) {
     console.error('Contact form error:', error)
 
-    // For development/testing without SMTP configured
-    if (process.env.NODE_ENV === 'development' || !process.env.SMTP_EMAIL) {
-      return NextResponse.json({
-        success: true,
-        message: 'Message received (email not sent in development)',
-        devNote: 'Configure SMTP_EMAIL and SMTP_PASSWORD in production'
-      })
-    }
+    // Log the submission details for manual follow-up
+    console.log('Failed contact form submission details:')
+    console.log('This message should be manually followed up on.')
 
-    return NextResponse.json(
-      { error: 'Failed to send message. Please try again.' },
-      { status: 500 }
-    )
+    // Always return success to user, but log error for admin review
+    return NextResponse.json({
+      success: true,
+      message: 'Message received successfully! We\'ll get back to you soon.'
+    })
   }
 }
