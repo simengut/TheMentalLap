@@ -1,30 +1,21 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.email) {
+    // Check if user is admin
+    if (!session || session.user.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    })
-
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      )
-    }
-
+    // Fetch all workshops with registrations
     const workshops = await prisma.workshop.findMany({
       include: {
         registrations: {
@@ -45,7 +36,7 @@ export async function GET() {
 
     return NextResponse.json(workshops)
   } catch (error) {
-    console.error('Failed to fetch workshops:', error)
+    console.error('Admin workshops error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch workshops' },
       { status: 500 }
