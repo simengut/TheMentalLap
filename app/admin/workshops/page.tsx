@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, MapPin, Users, DollarSign, Edit, Copy } from 'lucide-react'
+import { Calendar, Clock, MapPin, Users, DollarSign, Edit, Copy, Trash2, Eye } from 'lucide-react'
 import Link from 'next/link'
 
 interface Workshop {
@@ -32,6 +32,7 @@ export default function WorkshopManagementPage() {
   const router = useRouter()
   const [workshops, setWorkshops] = useState<Workshop[]>([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -62,6 +63,32 @@ export default function WorkshopManagementPage() {
     const emailString = emails.join(', ')
     navigator.clipboard.writeText(emailString)
     alert('Email addresses copied to clipboard!')
+  }
+
+  async function handleDelete(workshopId: string, workshopTitle: string) {
+    if (!confirm(`Are you sure you want to delete "${workshopTitle}"? This action cannot be undone.`)) {
+      return
+    }
+
+    setDeleting(workshopId)
+    try {
+      const response = await fetch(`/api/admin/workshops/${workshopId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        alert('Workshop deleted successfully!')
+        fetchWorkshops() // Refresh the list
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Failed to delete workshop')
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      alert('Failed to delete workshop. Please try again.')
+    } finally {
+      setDeleting(null)
+    }
   }
 
   if (status === 'loading' || loading) {
@@ -229,11 +256,20 @@ export default function WorkshopManagementPage() {
                       </div>
 
                       <div className="flex gap-2 ml-4">
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          View Details
+                        <Link href={`/admin/workshops/edit/${workshop.id}`}>
+                          <Button size="sm" variant="outline" title="Edit Workshop">
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDelete(workshop.id, workshop.title)}
+                          disabled={deleting === workshop.id}
+                          title="Delete Workshop"
+                        >
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>
@@ -288,9 +324,23 @@ export default function WorkshopManagementPage() {
                         </div>
                       )}
                     </div>
-                    <Button size="sm" variant="ghost">
-                      View Report
-                    </Button>
+                    <div className="flex gap-2">
+                      <Link href={`/admin/workshops/edit/${workshop.id}`}>
+                        <Button size="sm" variant="ghost" title="Edit Workshop">
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => handleDelete(workshop.id, workshop.title)}
+                        disabled={deleting === workshop.id}
+                        title="Delete Workshop"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
