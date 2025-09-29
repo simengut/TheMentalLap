@@ -4,10 +4,15 @@ import { prisma } from '@/lib/prisma'
 
 // Create reusable transporter object using SMTP transport
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.SMTP_EMAIL,
     pass: process.env.SMTP_PASSWORD
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 })
 
@@ -52,6 +57,19 @@ export async function POST(req: NextRequest) {
         success: true,
         message: 'Message received successfully! We\'ll get back to you soon.'
       })
+    }
+
+    // Test SMTP connection
+    console.log('Testing SMTP connection...')
+    console.log('SMTP_EMAIL:', process.env.SMTP_EMAIL ? 'configured' : 'missing')
+    console.log('SMTP_PASSWORD:', process.env.SMTP_PASSWORD ? 'configured' : 'missing')
+
+    try {
+      await transporter.verify()
+      console.log('SMTP connection verified successfully')
+    } catch (verifyError) {
+      console.error('SMTP verification failed:', verifyError)
+      // Continue anyway - maybe it will work
     }
 
     // Determine recipient based on type
@@ -107,7 +125,10 @@ You can reply directly to this email to respond to ${name} at ${email}
     }
 
     // Send email
-    await transporter.sendMail(mailOptions)
+    console.log('Attempting to send email to:', recipient)
+    console.log('From:', mailOptions.from)
+    const emailResult = await transporter.sendMail(mailOptions)
+    console.log('Email sent successfully:', emailResult.messageId)
 
     // Send confirmation email to the user
     const confirmationOptions = {
@@ -161,7 +182,9 @@ The Mental Lap Team
       `
     }
 
-    await transporter.sendMail(confirmationOptions)
+    console.log('Attempting to send confirmation email to:', email)
+    const confirmationResult = await transporter.sendMail(confirmationOptions)
+    console.log('Confirmation email sent successfully:', confirmationResult.messageId)
 
     return NextResponse.json({
       success: true,
