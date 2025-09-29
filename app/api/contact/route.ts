@@ -26,11 +26,28 @@ const createTransporter = () => {
     })
   }
 
-  // Default SMTP configuration for other providers
+  // Outlook/Hotmail configuration
+  if (smtpEmail.includes('@outlook.com') || smtpEmail.includes('@hotmail.com') || smtpEmail.includes('@live.com')) {
+    return nodemailer.createTransporter({
+      service: 'outlook',
+      host: 'smtp-mail.outlook.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD
+      },
+      tls: {
+        ciphers: 'SSLv3'
+      }
+    })
+  }
+
+  // GoDaddy/Custom domain configuration (most likely your case)
   return nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true',
+    host: process.env.SMTP_HOST || 'smtpout.secureserver.net', // GoDaddy SMTP
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: true, // true for 465, false for other ports
     auth: {
       user: process.env.SMTP_EMAIL,
       pass: process.env.SMTP_PASSWORD

@@ -3,18 +3,61 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import nodemailer from 'nodemailer'
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false
+const createTransporter = () => {
+  const smtpEmail = process.env.SMTP_EMAIL
+
+  if (!smtpEmail) return null
+
+  // Gmail configuration
+  if (smtpEmail.includes('@gmail.com')) {
+    return nodemailer.createTransporter({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    })
   }
-})
+
+  // Outlook/Hotmail configuration
+  if (smtpEmail.includes('@outlook.com') || smtpEmail.includes('@hotmail.com') || smtpEmail.includes('@live.com')) {
+    return nodemailer.createTransporter({
+      service: 'outlook',
+      host: 'smtp-mail.outlook.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD
+      },
+      tls: {
+        ciphers: 'SSLv3'
+      }
+    })
+  }
+
+  // GoDaddy/Custom domain configuration
+  return nodemailer.createTransporter({
+    host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: true,
+    auth: {
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  })
+}
+
+const transporter = createTransporter()
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,6 +77,13 @@ export async function POST(req: NextRequest) {
     console.log('SMTP_EMAIL:', process.env.SMTP_EMAIL ? 'configured' : 'missing')
     console.log('SMTP_PASSWORD:', process.env.SMTP_PASSWORD ? 'configured' : 'missing')
     console.log('Recipient:', recipient)
+
+    if (!transporter) {
+      return NextResponse.json({
+        success: false,
+        error: 'SMTP transporter not configured'
+      })
+    }
 
     // Test SMTP connection
     try {
