@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'SMTP verification failed',
-        details: verifyError.message
+        details: verifyError instanceof Error ? verifyError.message : String(verifyError)
       })
     }
 
@@ -93,7 +93,7 @@ To: ${recipient || 'support@thementallap.com'}
     return NextResponse.json({
       success: false,
       error: 'Failed to send test email',
-      details: error.message
+      details: error instanceof Error ? error.message : String(error)
     })
   }
 }
