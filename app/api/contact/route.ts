@@ -11,7 +11,7 @@ const createTransporter = () => {
 
   // Gmail configuration
   if (smtpEmail.includes('@gmail.com')) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: 'gmail',
       host: 'smtp.gmail.com',
       port: 587,
@@ -28,7 +28,7 @@ const createTransporter = () => {
 
   // Outlook/Hotmail configuration
   if (smtpEmail.includes('@outlook.com') || smtpEmail.includes('@hotmail.com') || smtpEmail.includes('@live.com')) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: 'outlook',
       host: 'smtp-mail.outlook.com',
       port: 587,
@@ -44,7 +44,7 @@ const createTransporter = () => {
   }
 
   // GoDaddy/Custom domain configuration (most likely your case)
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtpout.secureserver.net', // GoDaddy SMTP
     port: parseInt(process.env.SMTP_PORT || '465'),
     secure: true, // true for 465, false for other ports
