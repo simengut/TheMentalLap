@@ -68,12 +68,26 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate slug from title
-    const slug = title
+    let baseSlug = title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim()
+
+    // Ensure slug is unique
+    let slug = baseSlug
+    let counter = 1
+    while (true) {
+      const existingWorkshop = await prisma.workshop.findUnique({
+        where: { slug }
+      })
+
+      if (!existingWorkshop) break
+
+      slug = `${baseSlug}-${counter}`
+      counter++
+    }
 
     // Create the workshop
     const workshop = await prisma.workshop.create({

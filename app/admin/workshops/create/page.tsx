@@ -54,9 +54,13 @@ export default function CreateWorkshopPage() {
       })
 
       if (response.ok) {
+        const result = await response.json()
+        console.log('Workshop created successfully:', result.workshop)
+        alert('Workshop created successfully!')
         router.push('/admin/workshops')
       } else {
         const error = await response.json()
+        console.error('Workshop creation failed:', error)
         alert(error.error || 'Failed to create workshop')
       }
     } catch (error) {
