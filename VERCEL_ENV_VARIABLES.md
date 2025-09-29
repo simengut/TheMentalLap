@@ -1,6 +1,6 @@
 # Vercel Environment Variables
 
-Add these environment variables in Vercel Dashboard:
+Add these environment variables in Vercel Dashboard (REQUIRED for login to work):
 Settings → Environment Variables
 
 ## Required Variables:
