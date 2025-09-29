@@ -121,15 +121,17 @@ export default function FormAnalysisPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="video">Video File</Label>
-                    <Input
-                      id="video"
-                      type="file"
-                      accept="video/*"
-                      required
-                    />
+                    <Label htmlFor="video">Video Upload</Label>
+                    <Button
+                      type="button"
+                      onClick={() => window.open('https://forms.gle/rmAiY8psPvyNAhtTA', '_blank')}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      Upload Video via Google Forms
+                    </Button>
                     <p className="text-xs text-slate-500">
-                      MP4 or MOV format, max 500MB
+                      Click to open upload form in a new tab
                     </p>
                   </div>
 
